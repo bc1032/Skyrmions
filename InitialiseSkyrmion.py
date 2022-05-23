@@ -19,6 +19,7 @@ def initialise(Lx, Ly, R):
     phi = np.zeros([Lx,Ly])
     centrex = int(Lx/2)
     centrey = int(Ly/2)
+    file = open('directorfield.dat', 'w')
 
     for x in range(0,Lx):
         for y in range(0,Ly):
@@ -37,9 +38,17 @@ def initialise(Lx, Ly, R):
             else:
                 phi[x,y] = math.pi/2
 
+            i = math.sin(theta[x,y])*math.cos(phi[x,y])
+            j = math.sin(theta[x,y])*math.sin(phi[x,y])
+            k = math.cos(theta[x,y])
+            file.write("%f %f  %f\n" % (i,j,k))
+
+
+
     print(phi,theta)
     np.savetxt('phi.dat', phi)
     np.savetxt('theta.dat', theta)
+    file.close()
     return(phi,theta)
 
 initialise(Lx,Ly,R)
