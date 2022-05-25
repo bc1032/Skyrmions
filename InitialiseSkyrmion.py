@@ -20,6 +20,9 @@ def initialise(Lx, Ly, R):
     centrex = int(Lx/2)
     centrey = int(Ly/2)
     file = open('directorfield.dat', 'w')
+    filei = open('i.dat', 'w')
+    filej = open('j.dat', 'w')
+    filek = open('k.dat', 'w')
 
     for x in range(0,Lx):
         for y in range(0,Ly):
@@ -41,14 +44,20 @@ def initialise(Lx, Ly, R):
             i = math.sin(theta[x,y])*math.cos(phi[x,y])
             j = math.sin(theta[x,y])*math.sin(phi[x,y])
             k = math.cos(theta[x,y])
-            file.write("%f %f  %f\n" % (i,j,k))
-
+            file.write("%f  %f  %f\n" % (i,j,k))
+            filei.write("%f\n" % (i))
+            filej.write("%f\n" % (j))
+            filek.write("%f\n" % (k))
 
 
     print(phi,theta)
     np.savetxt('phi.dat', phi)
     np.savetxt('theta.dat', theta)
     file.close()
+    filei.close()
+    filej.close()
+    filek.close()
+
     return(phi,theta)
 
 initialise(Lx,Ly,R)
