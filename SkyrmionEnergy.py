@@ -24,7 +24,27 @@ def sphere(a,b,c):
     theta = np.loadtxt('theta.dat')
 
     for x in range(0,Lx):
+
+        if x == 0:
+                xl = Lx-1
+                xr = 1
+        elif x == Lx-1:
+            xl = Lx-2
+            xr = 0
+        else:
+            xl = x - 1
+            xr = x + 1
+            
         for y in range(0,Ly):
+            if y == 0:
+                ya = y+1
+                yb = Ly-1
+            elif y == Ly-1:
+                ya = 0
+                yb = Ly-2
+            else:
+                ya = y+1
+                yb = y-1
 
             E = c*(-1 + math.cos(theta[x,y])**2) + b*(-(math.cos(phi[x,y])*(-theta[x,yb] + theta[x,ya]))/(2.*dy) + (math.sin(phi[x,y])*(-theta[xl,y] + theta[xr,y]))/(2.*dx) +\
                 math.cos(theta[x,y])*math.sin(theta[x,y])*((math.sin(phi[x,y])*(-phi[x,yb] + phi[x,ya]))/(2.*dy) + (math.cos(phi[x,y])*(-phi[xl,y] + phi[xr,y]))/(2.*dx))) + \

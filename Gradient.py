@@ -11,11 +11,12 @@ import SkyrmionEnergy
 def derivativesphere(gamma,phi,theta):
     dx, dy = 1, 1
     tolerance = 0.001
+    gamma = 1
 
-    phi, theta, dphi, dtheta = minimise(gamma,phi,theta)
+    phi,theta,dphi, dtheta = minimise(gamma,phi,theta)
 
     if np.sum(dphi) > tolerance and np.sum(dphi) > tolerance:
-        phi, theta, dphi, dtheta = minimise(gamma,phi,theta)
+        phi,theta,dphi, dtheta = minimise(gamma,phi,theta)
     else:
         return(phi,theta)
 
@@ -74,8 +75,7 @@ def minimise(gamma,phi,theta):
                         (math.cos(theta[x,y])*(-((theta[x,yb] - 2*theta[x,y] + theta[x,ya])/dx) + (theta[xl,y] - 2*theta[x,y] + theta[xr,y])/dx + \
                         ((-theta[xl,y] + theta[xr,y])*(-phi[x,yb] + phi[x,ya]))/(2.*dx*dy) + ((-theta[x,yb] + theta[x,ya])*(-phi[xl,y] + phi[xr,y]))/(2.*dx*dy)) + \
                         math.sin(theta[x,y])*((-theta[x,yb] + theta[x,ya])**2/(4.*dy**2) - (-theta[xl,y] + theta[xr,y])**2/(4.*dx**2) + (-phi[x,yb] + phi[x,ya])**2/(4.*dy**2) - \
-                        (-phi[xl,y] + phi[xr,y])**2/(4.*dx**2) + (-phi[xl,yb] + phi[xr,ya])/(2.*dx*dy))
-
-            phi[x,y] -= dphi[x,y]
-            theta[x,y] -= dtheta[x,y]
-    return(phi,theta,dphi,dtheta)
+                        (-phi[xl,y] + phi[xr,y])**2/(4.*dx**2) + (-phi[xl,yb] + phi[xr,ya])/(2.*dx*dy)))
+    phi -= dphi
+    theta -= dtheta
+    return(phi,theta, dphi,dtheta)

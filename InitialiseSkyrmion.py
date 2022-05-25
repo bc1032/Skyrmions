@@ -59,4 +59,4 @@ def initialise(Lx, Ly, R,twist):
 
     return(phi,theta)
 
-initialise(Lx,Ly,R)
+initialise(Lx,Ly,R,twist)
