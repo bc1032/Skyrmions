@@ -29,17 +29,18 @@ def initialise(Lx, Ly, R):
             dx = abs(centrex - x)
             dy = abs(centrey - y)
 
-            #If inside circle of Radius, R, change elements to desired quantities.
-            if dx > R or dy > R:
-                phi[x,y] = math.pi/2
-            elif dx + dy <= R:
+            # If inside circle of Radius, R, change elements to desired quantities.
+            # if dx > R or dy > R:
+            #     phi[x,y] = math.pi/2
+            # elif dx + dy <= R:
+            #     phi[x,y] = math.pi/2 + math.atan2(y-centrey,x-centrex)
+            #     theta[x,y] =  math.pi*math.sqrt((x-centrex)**2 + (y-centrey)**2)/(R)
+            if math.sqrt(dx**2 + dy**2) < R:
                 phi[x,y] = math.pi/2 + math.atan2(y-centrey,x-centrex)
-                theta[x,y] =  math.pi*math.sqrt((x-centrex)**2 + (y-centrey)**2)/(2*R)
-            elif math.sqrt(dx**2 + dy**2) < R:
-                phi[x,y] = math.pi/2 + math.atan2(y-centrey,x-centrex)
-                theta[x,y] =  math.pi*math.sqrt((x-centrex)**2 + (y-centrey)**2)/(2*R)
+                theta[x,y] =  math.pi*math.sqrt((x-centrex)**2 + (y-centrey)**2)/(R)
             else:
                 phi[x,y] = math.pi/2
+                theta[x,y] = math.pi
 
             i = math.sin(theta[x,y])*math.cos(phi[x,y])
             j = math.sin(theta[x,y])*math.sin(phi[x,y])
