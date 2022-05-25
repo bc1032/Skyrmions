@@ -8,24 +8,32 @@ from scipy.optimize import minimize
 import InitialiseSkyrmion
 import SkyrmionEnergy
 
-def derivativesphere(gamma,phi,theta):
+def derivativesphere(gamma):
     dx, dy = 1, 1
-    tolerance = 0.001
+    tolerance = 1e-30
     gamma = 1
+    phi = np.loadtxt('phi.dat')
+    theta = np.loadtxt('theta.dat')
+    a,b,c = 1,1,1
 
     phi,theta,dphi, dtheta = minimise(gamma,phi,theta)
+    SkyrmionEnergy.sphere(a,b,c)
 
-    if np.sum(dphi) > tolerance and np.sum(dphi) > tolerance:
-        phi,theta,dphi, dtheta = minimise(gamma,phi,theta)
-    else:
-        return(phi,theta)
+    for i in range(0,1000):
+        if np.sum(dphi) < tolerance and np.sum(dphi) < tolerance:
+            np.savetxt('phifinal',phi)
+            np.savetxt('thetafinal',theta)
+
+            return(phi,theta)
+        else:
+            phi,theta,dphi, dtheta = minimise(gamma,phi,theta)
 
 def minimise(gamma,phi,theta):
     a,b,c = 1,1,1
     Lx,Ly = 101, 101
     dphi = np.zeros((Lx,Ly))
     dtheta = np.zeros((Lx,Ly))
-
+    dx,dy = 1,1
     for x in range(0,Lx):
 
         if x == 0:
@@ -76,6 +84,11 @@ def minimise(gamma,phi,theta):
                         ((-theta[xl,y] + theta[xr,y])*(-phi[x,yb] + phi[x,ya]))/(2.*dx*dy) + ((-theta[x,yb] + theta[x,ya])*(-phi[xl,y] + phi[xr,y]))/(2.*dx*dy)) + \
                         math.sin(theta[x,y])*((-theta[x,yb] + theta[x,ya])**2/(4.*dy**2) - (-theta[xl,y] + theta[xr,y])**2/(4.*dx**2) + (-phi[x,yb] + phi[x,ya])**2/(4.*dy**2) - \
                         (-phi[xl,y] + phi[xr,y])**2/(4.*dx**2) + (-phi[xl,yb] + phi[xr,ya])/(2.*dx*dy)))
-    phi -= dphi
-    theta -= dtheta
+    np.savetxt('dtheta.dat', dtheta)
+    np.savetxt('dphi.dat', dphi)
+
+    print(dtheta)
+    phi = phi - dphi
+    theta = theta - dtheta
     return(phi,theta, dphi,dtheta)
+derivativesphere(1)

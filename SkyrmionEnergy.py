@@ -19,7 +19,7 @@ R = 40
 def sphere(a,b,c):
     dx = 1
     dy = 1
-
+    E=0.0
     phi = np.loadtxt('phi.dat')
     theta = np.loadtxt('theta.dat')
 
@@ -34,7 +34,7 @@ def sphere(a,b,c):
         else:
             xl = x - 1
             xr = x + 1
-            
+
         for y in range(0,Ly):
             if y == 0:
                 ya = y+1
@@ -46,12 +46,19 @@ def sphere(a,b,c):
                 ya = y+1
                 yb = y-1
 
-            E = c*(-1 + math.cos(theta[x,y])**2) + b*(-(math.cos(phi[x,y])*(-theta[x,yb] + theta[x,ya]))/(2.*dy) + (math.sin(phi[x,y])*(-theta[xl,y] + theta[xr,y]))/(2.*dx) +\
+            E += c*(-1 + math.cos(theta[x,y])**2) + b*(-(math.cos(phi[x,y])*(-theta[x,yb] + theta[x,ya]))/(2.*dy) + (math.sin(phi[x,y])*(-theta[xl,y] + theta[xr,y]))/(2.*dx) +\
                 math.cos(theta[x,y])*math.sin(theta[x,y])*((math.sin(phi[x,y])*(-phi[x,yb] + phi[x,ya]))/(2.*dy) + (math.cos(phi[x,y])*(-phi[xl,y] + phi[xr,y]))/(2.*dx))) + \
                 a*(math.cos(phi[x,y])*((math.cos(theta[x,y])*(-theta[xl,y] + theta[xr,y]))/(2.*dx) + (math.sin(theta[x,y])*(-phi[x,yb] + phi[x,ya]))/(2.*dy)) + \
                 math.sin(phi[x,y])*((math.cos(theta[x,y])*(-theta[x,yb] + theta[x,ya]))/(2.*dy) - (math.sin(theta[x,y])*(-phi[xl,y] + phi[xr,y]))/(2.*dx)))**2
-
+    print(E)
     return(E)
+
+
+
+
+
+
+
 
 def projection(u,v):
 
@@ -64,4 +71,4 @@ def projection(u,v):
 
     return(E)
 
-sphere(1,2,3)
+sphere(1,1,1)
