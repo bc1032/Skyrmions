@@ -8,29 +8,74 @@ from scipy.optimize import minimize
 import InitialiseSkyrmion
 import SkyrmionEnergy
 
-def derivativesphere():
+def derivativesphere(gamma,phi,theta):
     dx, dy = 1, 1
-    dphi -= Sin(theta[x,y])*((b*Sin(theta[x,y])*Sin(phi[x,y])*(-theta(x,-1 + y) + theta(x,1 + y)))/dy + (b*Cos(phi[x,y])*Sin(theta[x,y])*(-theta[x-1,y] + theta[x+1,y]))/dx - \
-                2*a*Cos(theta[x,y])*(((-theta(x,-1 + y) + theta(x,1 + y))*(-phi(x,-1 + y) + phi(x,1 + y)))/(4.*dy**2) + ((-theta[x-1,y] + theta[x+1,y])*(-phi[x-1,y] + phi[x+1,y]))/(4.*dx**2)) -\
-                a*Sin(theta[x,y])*((phi(x,-1 + y) - 2*phi[x,y] + phi(x,1 + y))/dx + (phi[x-1,y] - 2*phi[x,y] + phi[x+1,y])/dx) + \
-                a*Sin(2*phi[x,y])*(Cos(theta[x,y])*(-((theta(x,-1 + y) - 2*theta[x,y] + theta(x,1 + y))/dx) + (theta[x-1,y] - 2*theta[x,y] + theta[x+1,y])/dx + \
-                ((-theta[x-1,y] + theta[x+1,y])*(-phi(x,-1 + y) + phi(x,1 + y)))/(2.*dx*dy) + ((-theta(x,-1 + y) + theta(x,1 + y))*(-phi[x-1,y] + phi[x+1,y]))/(2.*dx*dy)) + \
-                Sin(theta[x,y])*((-theta(x,-1 + y) + theta(x,1 + y))**2/(4.*dy**2) - (-theta[x-1,y] + theta[x+1,y])**2/(4.*dx**2) + (-phi(x,-1 + y) + phi(x,1 + y))**2/(4.*dy**2) - \
-                (-phi[x-1,y] + phi[x+1,y])**2/(4.*dx**2) + (phi(1,1 + y) - phi[x-1,y] - phi(x,-1 + y) + phi[x+1,y])/(2.*dx*dy))) + \
-                a*Cos(2*phi[x,y])*(-2*Cos(theta[x,y])*((theta(1,1 + y) - theta[x-1,y] - theta(x,-1 + y) + theta[x+1,y])/(4.*dx*dy) + \
-                ((-theta(x,-1 + y) + theta(x,1 + y))*(-phi(x,-1 + y) + phi(x,1 + y)))/(4.*dy**2) - ((-theta[x-1,y] + theta[x+1,y])*(-phi[x-1,y] + phi[x+1,y]))/(4.*dx**2)) + \
-                Sin(theta[x,y])*(((-theta(x,-1 + y) + theta(x,1 + y))*(-theta[x-1,y] + theta[x+1,y]))/(2.*dx*dy) - (phi(x,-1 + y) - 2*phi[x,y] + phi(x,1 + y))/dx + \
-                ((-phi(x,-1 + y) + phi(x,1 + y))*(-phi[x-1,y] + phi[x+1,y]))/(2.*dx*dy) + (phi[x-1,y] - 2*phi[x,y] + phi[x+1,y])/dx))
+    tolerance = 0.001
 
-    dtheta -= -((b*Sin(theta[x,y])**2*Sin(phi[x,y])*(-phi(x,-1 + y) + phi(x,1 + y)))/dy) - (b*Cos(phi[x,y])*Sin(theta[x,y])**2*(-phi[x-1,y] + phi[x+1,y]))/dx - \
-                a*Cos(theta[x,y])*Cos(2*phi[x,y])*(Cos(theta[x,y])*(-((theta(x,-1 + y) - 2*theta[x,y] + theta(x,1 + y))/dx) + (theta[x-1,y] - 2*theta[x,y] + theta[x+1,y])/dx + \
-                ((-theta[x-1,y] + theta[x+1,y])*(-phi(x,-1 + y) + phi(x,1 + y)))/(2.*dx*dy) + ((-theta(x,-1 + y) + theta(x,1 + y))*(-phi[x-1,y] + phi[x+1,y]))/(2.*dx*dy)) + \
-                Sin(theta[x,y])*((-theta(x,-1 + y) + theta(x,1 + y))**2/(4.*dy**2) - (-theta[x-1,y] + theta[x+1,y])**2/(4.*dx**2) + (-phi(x,-1 + y) + phi(x,1 + y))**2/(4.*dy**2) - \
-                (-phi[x-1,y] + phi[x+1,y])**2/(4.*dx**2) + (phi(1,1 + y) - phi[x-1,y] - phi(x,-1 + y) + phi[x+1,y])/(2.*dx*dy))) + \
-                a*Cos(theta[x,y])*Sin(2*phi[x,y])*(-2*Cos(theta[x,y])*((theta(1,1 + y) - theta[x-1,y] - theta(x,-1 + y) + theta[x+1,y])/(4.*dx*dy) + \
-                ((-theta(x,-1 + y) + theta(x,1 + y))*(-phi(x,-1 + y) + phi(x,1 + y)))/(4.*dy**2) - ((-theta[x-1,y] + theta[x+1,y])*(-phi[x-1,y] + phi[x+1,y]))/(4.*dx**2)) + \
-                Sin(theta[x,y])*(((-theta(x,-1 + y) + theta(x,1 + y))*(-theta[x-1,y] + theta[x+1,y]))/(2.*dx*dy) - (phi(x,-1 + y) - 2*phi[x,y] + phi(x,1 + y))/dx + \
-                ((-phi(x,-1 + y) + phi(x,1 + y))*(-phi[x-1,y] + phi[x+1,y]))/(2.*dx*dy) + (phi[x-1,y] - 2*phi[x,y] + phi[x+1,y])/dx)) + \
-                Cos(theta[x,y])*(-(a*Cos(theta[x,y])*((theta(x,-1 + y) - 2*theta[x,y] + theta(x,1 + y))/dx + (theta[x-1,y] - 2*theta[x,y] + theta[x+1,y])/dx)) + \
-                Sin(theta[x,y])*(-2*c + a*((-theta(x,-1 + y) + theta(x,1 + y))**2/(4.*dy**2) + (-theta[x-1,y] + theta[x+1,y])**2/(4.*dx**2) + (-phi(x,-1 + y) + phi(x,1 + y))**2/(4.*dy**2) +\
-                (-phi[x-1,y] + phi[x+1,y])**2/(4.*dx**2)))
+    phi, theta, dphi, dtheta = minimise(gamma,phi,theta)
+
+    if np.sum(dphi) > tolerance and np.sum(dphi) > tolerance:
+        phi, theta, dphi, dtheta = minimise(gamma,phi,theta)
+    else:
+        return(phi,theta)
+
+def minimise(gamma,phi,theta):
+    a,b,c = 1,1,1
+    Lx,Ly = 101, 101
+    dphi = np.zeros((Lx,Ly))
+    dtheta = np.zeros((Lx,Ly))
+
+    for x in range(0,Lx):
+
+        if x == 0:
+                xl = Lx-1
+                xr = 1
+        elif x == Lx-1:
+            xl = Lx-2
+            xr = 0
+        else:
+            xl = x - 1
+            xr = x + 1
+
+        for y in range(0,Ly):
+
+            if y == 0:
+                ya = y+1
+                yb = Ly-1
+            elif y == Ly-1:
+                ya = 0
+                yb = Ly-2
+            else:
+                ya = y+1
+                yb = y-1
+
+            dphi[x,y] = gamma*math.sin(theta[x,y])*((b*math.sin(theta[x,y])*math.sin(phi[x,y])*(-theta[x,yb] + theta[x,ya]))/dy \
+                        + (b*math.cos(phi[x,y])*math.sin(theta[x,y])*(-theta[xl,y] + theta[xr,y]))/dx -\
+                        2*a*math.cos(theta[x,y])*(((-theta[x,yb] + theta[x,ya])*(-phi[x,yb] + phi[x,ya]))/(4.*dy**2) + ((-theta[xl,y] + theta[xr,y])*(-phi[xl,y] + phi[xr,y]))/(4.*dx**2)) - \
+                        a*math.sin(theta[x,y])*((phi[x,yb] - 2*phi[x,y] + phi[x,ya])/dx + (phi[xl,y] - 2*phi[x,y] + phi[xr,y])/dx) + \
+                        a*math.cos(2*phi[x,y])*(-2*math.cos(theta[x,y])*((-theta[xl,yb] + theta[xr,ya])/(4.*dx*dy) + ((-theta[x,yb] + theta[x,ya])*(-phi[x,yb] + phi[x,ya]))/(4.*dy**2) - \
+                        ((-theta[xl,y] + theta[xr,y])*(-phi[xl,y] + phi[xr,y]))/(4.*dx**2)) + \
+                        math.sin(theta[x,y])*(((-theta[x,yb] + theta[x,ya])*(-theta[xl,y] + theta[xr,y]))/(2.*dx*dy) - (phi[x,yb] - 2*phi[x,y] + phi[x,ya])/dx + \
+                        ((-phi[x,yb] + phi[x,ya])*(-phi[xl,y] + phi[xr,y]))/(2.*dx*dy) + (phi[xl,y] - 2*phi[x,y] + phi[xr,y])/dx)) + \
+                        a*math.sin(2*phi[x,y])*(math.cos(theta[x,y])*(-((theta[x,yb] - 2*theta[x,y] + theta[x,ya])/dx) + (theta[xl,y] - 2*theta[x,y] + theta[xr,y])/dx + \
+                        ((-theta[xl,y] + theta[xr,y])*(-phi[x,yb] + phi[x,ya]))/(2.*dx*dy) + ((-theta[x,yb] + theta[x,ya])*(-phi[xl,y] + phi[xr,y]))/(2.*dx*dy)) + \
+                        math.sin(theta[x,y])*((-theta[x,yb] + theta[x,ya])**2/(4.*dy**2) - (-theta[xl,y] + theta[xr,y])**2/(4.*dx**2) + (-phi[x,yb] + phi[x,ya])**2/(4.*dy**2) - \
+                        (-phi[xl,y] + phi[xr,y])**2/(4.*dx**2) + (-phi[xl,yb] + phi[xr,ya])/(2.*dx*dy))))
+
+            dtheta[x,y] = -gamma*((b*math.sin(theta[x,y])**2*math.sin(phi[x,y])*(-phi[x,yb] + phi[x,ya]))/dy)\
+                        - (b*math.cos(phi[x,y])*math.sin(theta[x,y])**2*(-phi[xl,y] + phi[xr,y]))/dx + \
+                        a*math.cos(theta[x,y])*math.sin(2*phi[x,y])*(-2*math.cos(theta[x,y])*((-theta[xl,yb] + theta[xr,ya])/(4.*dx*dy) + \
+                        ((-theta[x,yb] + theta[x,ya])*(-phi[x,yb] + phi[x,ya]))/(4.*dy**2) - ((-theta[xl,y] + theta[xr,y])*(-phi[xl,y] + phi[xr,y]))/(4.*dx**2)) + \
+                        math.sin(theta[x,y])*(((-theta[x,yb] + theta[x,ya])*(-theta[xl,y] + theta[xr,y]))/(2.*dx*dy) - (phi[x,yb] - 2*phi[x,y] + phi[x,ya])/dx + \
+                        ((-phi[x,yb] + phi[x,ya])*(-phi[xl,y] + phi[xr,y]))/(2.*dx*dy) + (phi[xl,y] - 2*phi[x,y] + phi[xr,y])/dx)) + \
+                        math.cos(theta[x,y])*(-(a*math.cos(theta[x,y])*((theta[x,yb] - 2*theta[x,y] + theta[x,ya])/dx + (theta[xl,y] - 2*theta[x,y] + theta[xr,y])/dx)) + \
+                        math.sin(theta[x,y])*(-2*c + a*((-theta[x,yb] + theta[x,ya])**2/(4.*dy**2) + (-theta[xl,y] + theta[xr,y])**2/(4.*dx**2) + (-phi[x,yb] + phi[x,ya])**2/(4.*dy**2) + \
+                        (-phi[xl,y] + phi[xr,y])**2/(4.*dx**2)))) - a*math.cos(theta[x,y])*math.cos(2*phi[x,y])*\
+                        (math.cos(theta[x,y])*(-((theta[x,yb] - 2*theta[x,y] + theta[x,ya])/dx) + (theta[xl,y] - 2*theta[x,y] + theta[xr,y])/dx + \
+                        ((-theta[xl,y] + theta[xr,y])*(-phi[x,yb] + phi[x,ya]))/(2.*dx*dy) + ((-theta[x,yb] + theta[x,ya])*(-phi[xl,y] + phi[xr,y]))/(2.*dx*dy)) + \
+                        math.sin(theta[x,y])*((-theta[x,yb] + theta[x,ya])**2/(4.*dy**2) - (-theta[xl,y] + theta[xr,y])**2/(4.*dx**2) + (-phi[x,yb] + phi[x,ya])**2/(4.*dy**2) - \
+                        (-phi[xl,y] + phi[xr,y])**2/(4.*dx**2) + (-phi[xl,yb] + phi[xr,ya])/(2.*dx*dy))
+
+            phi[x,y] -= dphi[x,y]
+            theta[x,y] -= dtheta[x,y]
+    return(phi,theta,dphi,dtheta)

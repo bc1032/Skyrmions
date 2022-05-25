@@ -13,8 +13,9 @@ os.chdir('results')
 
 Lx, Ly = 101, 101
 R = 40
+twist = 1
 
-def initialise(Lx, Ly, R):
+def initialise(Lx, Ly, R,twist):
     theta = np.zeros([Lx, Ly])
     phi = np.zeros([Lx,Ly])
     centrex = int(Lx/2)
@@ -25,19 +26,16 @@ def initialise(Lx, Ly, R):
     filek = open('k.dat', 'w')
 
     for x in range(0,Lx):
+
+
         for y in range(0,Ly):
             dx = abs(centrex - x)
             dy = abs(centrey - y)
 
             # If inside circle of Radius, R, change elements to desired quantities.
-            # if dx > R or dy > R:
-            #     phi[x,y] = math.pi/2
-            # elif dx + dy <= R:
-            #     phi[x,y] = math.pi/2 + math.atan2(y-centrey,x-centrex)
-            #     theta[x,y] =  math.pi*math.sqrt((x-centrex)**2 + (y-centrey)**2)/(R)
-            if math.sqrt(dx**2 + dy**2) < R:
+            if math.sqrt(dx**2 + dy**2) <= R:
                 phi[x,y] = math.pi/2 + math.atan2(y-centrey,x-centrex)
-                theta[x,y] =  math.pi*math.sqrt((x-centrex)**2 + (y-centrey)**2)/(R)
+                theta[x,y] =  math.pi*math.sqrt((x-centrex)**2 + (y-centrey)**2)/(twist*R)
             else:
                 phi[x,y] = math.pi/2
                 theta[x,y] = math.pi
