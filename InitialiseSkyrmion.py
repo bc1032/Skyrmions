@@ -49,7 +49,7 @@ def initialise(Lx, Ly, R,twist):
             filek.write("%f\n" % (k))
 
 
-    print(phi,theta)
+    #print(phi,theta)
     np.savetxt('phi.dat', phi)
     np.savetxt('theta.dat', theta)
     file.close()

@@ -10,24 +10,28 @@ import SkyrmionEnergy
 
 def derivativesphere(gamma):
     dx, dy = 1, 1
-    tolerance = 1e5
-    gamma = 1
+    tolerance = 1e-6
+    gamma = 1e-3
     phi = np.loadtxt('phi.dat')
     theta = np.loadtxt('theta.dat')
     a,b,c = 1,1,1
-
+    E = SkyrmionEnergy.sphere(a,b,c)
     phi,theta,dphi, dtheta = minimise(gamma,phi,theta)
     SkyrmionEnergy.sphere(a,b,c)
 
     for i in range(0,1000):
-        print(np.sum(dphi),np.sum(dtheta))
+        #print(np.sum(dphi),np.sum(dtheta))
         print(i)
-        SkyrmionEnergy.sphere(a,b,c)
+        Eprev = E
+        E = SkyrmionEnergy.sphere(a,b,c)
 
-        if (np.sum(dtheta)) < tolerance and np.sum(dtheta) < tolerance:
+        # if (np.sum(dtheta)) < tolerance and np.sum(dtheta) < tolerance:
+        #     np.savetxt('phifinal',phi)
+        #     np.savetxt('thetafinal',theta)
+        #     return(phi,theta)
+        if abs(Eprev - E) < tolerance:
             np.savetxt('phifinal',phi)
             np.savetxt('thetafinal',theta)
-
             return(phi,theta)
         else:
             phi,theta,dphi, dtheta = minimise(gamma,phi,theta)
@@ -92,11 +96,13 @@ def minimise(gamma,phi,theta):
     theta -= dtheta
     np.savetxt('dtheta.dat', dtheta)
     np.savetxt('dphi.dat', dphi)
-
-    print(dtheta)
+    np.savetxt('theta.dat', theta)
+    np.savetxt('phi.dat', phi)
+    #print(dtheta)
     #phi = phi - dphi
     #theta = theta - dtheta
     return(phi,theta, dphi,dtheta)
+
 phi,theta = derivativesphere(1)
 file = open('finaldirectorfield.dat', 'w')
 
