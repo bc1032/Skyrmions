@@ -10,31 +10,38 @@ import SkyrmionEnergy
 
 def derivativesphere(gamma):
     dx, dy = 1, 1
-    tolerance = 1e-6
-    gamma = 1e-3
+    numits = 10000
+    tolerance = 1e-2
+    gamma = -1e-3
     phi = np.loadtxt('phi.dat')
     theta = np.loadtxt('theta.dat')
     a,b,c = 1,1,1
-    E = SkyrmionEnergy.sphere(a,b,c)
-    phi,theta,dphi, dtheta = minimise(gamma,phi,theta)
-    SkyrmionEnergy.sphere(a,b,c)
+    E = SkyrmionEnergy.sphere(a,b,c, phi,theta)
+    phi,theta = minimise(gamma,phi,theta)
+    #SkyrmionEnergy.sphere(a,b,c, phi,theta)
 
-    for i in range(0,1000):
+    for i in range(0,numits):
         #print(np.sum(dphi),np.sum(dtheta))
         print(i)
         Eprev = E
-        E = SkyrmionEnergy.sphere(a,b,c)
+        #phi,theta,dphi, dtheta = minimise(gamma,phi,theta)
+
+        E = SkyrmionEnergy.sphere(a,b,c, phi, theta)
 
         # if (np.sum(dtheta)) < tolerance and np.sum(dtheta) < tolerance:
         #     np.savetxt('phifinal',phi)
         #     np.savetxt('thetafinal',theta)
         #     return(phi,theta)
+        print(abs(Eprev - E))
         if abs(Eprev - E) < tolerance:
             np.savetxt('phifinal',phi)
             np.savetxt('thetafinal',theta)
             return(phi,theta)
         else:
-            phi,theta,dphi, dtheta = minimise(gamma,phi,theta)
+            phi,theta = minimise(gamma,phi,theta)
+    np.savetxt('phifinal',phi)
+    np.savetxt('thetafinal',theta)
+    return(phi,theta)
 
 def minimise(gamma,phi,theta):
     a,b,c = 1,1,1
@@ -42,6 +49,7 @@ def minimise(gamma,phi,theta):
     dphi = np.zeros((Lx,Ly))
     dtheta = np.zeros((Lx,Ly))
     dx,dy = 1,1
+    #gamma = -1e-3
     for x in range(0,Lx):
 
         if x == 0:
@@ -66,7 +74,7 @@ def minimise(gamma,phi,theta):
                 ya = y+1
                 yb = y-1
 
-            dphi[x,y] = gamma*math.sin(theta[x,y])*((b*math.sin(theta[x,y])*math.sin(phi[x,y])*(-theta[x,yb] + theta[x,ya]))/dy \
+            dphi[x,y] = gamma*(math.sin(theta[x,y])*((b*math.sin(theta[x,y])*math.sin(phi[x,y])*(-theta[x,yb] + theta[x,ya]))/dy \
                         + (b*math.cos(phi[x,y])*math.sin(theta[x,y])*(-theta[xl,y] + theta[xr,y]))/dx -\
                         2*a*math.cos(theta[x,y])*(((-theta[x,yb] + theta[x,ya])*(-phi[x,yb] + phi[x,ya]))/(4.*dy**2) + ((-theta[xl,y] + theta[xr,y])*(-phi[xl,y] + phi[xr,y]))/(4.*dx**2)) - \
                         a*math.sin(theta[x,y])*((phi[x,yb] - 2*phi[x,y] + phi[x,ya])/dx + (phi[xl,y] - 2*phi[x,y] + phi[xr,y])/dx) + \
@@ -77,9 +85,9 @@ def minimise(gamma,phi,theta):
                         a*math.sin(2*phi[x,y])*(math.cos(theta[x,y])*(-((theta[x,yb] - 2*theta[x,y] + theta[x,ya])/dx) + (theta[xl,y] - 2*theta[x,y] + theta[xr,y])/dx + \
                         ((-theta[xl,y] + theta[xr,y])*(-phi[x,yb] + phi[x,ya]))/(2.*dx*dy) + ((-theta[x,yb] + theta[x,ya])*(-phi[xl,y] + phi[xr,y]))/(2.*dx*dy)) + \
                         math.sin(theta[x,y])*((-theta[x,yb] + theta[x,ya])**2/(4.*dy**2) - (-theta[xl,y] + theta[xr,y])**2/(4.*dx**2) + (-phi[x,yb] + phi[x,ya])**2/(4.*dy**2) - \
-                        (-phi[xl,y] + phi[xr,y])**2/(4.*dx**2) + (-phi[xl,yb] + phi[xr,ya])/(2.*dx*dy))))
+                        (-phi[xl,y] + phi[xr,y])**2/(4.*dx**2) + (-phi[xl,yb] + phi[xr,ya])/(2.*dx*dy)))))
 
-            dtheta[x,y] = -gamma*((b*math.sin(theta[x,y])**2*math.sin(phi[x,y])*(-phi[x,yb] + phi[x,ya]))/dy)\
+            dtheta[x,y] = -gamma*(((b*math.sin(theta[x,y])**2*math.sin(phi[x,y])*(-phi[x,yb] + phi[x,ya]))/dy)\
                         - (b*math.cos(phi[x,y])*math.sin(theta[x,y])**2*(-phi[xl,y] + phi[xr,y]))/dx + \
                         a*math.cos(theta[x,y])*math.sin(2*phi[x,y])*(-2*math.cos(theta[x,y])*((-theta[xl,yb] + theta[xr,ya])/(4.*dx*dy) + \
                         ((-theta[x,yb] + theta[x,ya])*(-phi[x,yb] + phi[x,ya]))/(4.*dy**2) - ((-theta[xl,y] + theta[xr,y])*(-phi[xl,y] + phi[xr,y]))/(4.*dx**2)) + \
@@ -91,19 +99,28 @@ def minimise(gamma,phi,theta):
                         (math.cos(theta[x,y])*(-((theta[x,yb] - 2*theta[x,y] + theta[x,ya])/dx) + (theta[xl,y] - 2*theta[x,y] + theta[xr,y])/dx + \
                         ((-theta[xl,y] + theta[xr,y])*(-phi[x,yb] + phi[x,ya]))/(2.*dx*dy) + ((-theta[x,yb] + theta[x,ya])*(-phi[xl,y] + phi[xr,y]))/(2.*dx*dy)) + \
                         math.sin(theta[x,y])*((-theta[x,yb] + theta[x,ya])**2/(4.*dy**2) - (-theta[xl,y] + theta[xr,y])**2/(4.*dx**2) + (-phi[x,yb] + phi[x,ya])**2/(4.*dy**2) - \
-                        (-phi[xl,y] + phi[xr,y])**2/(4.*dx**2) + (-phi[xl,yb] + phi[xr,ya])/(2.*dx*dy)))
+                        (-phi[xl,y] + phi[xr,y])**2/(4.*dx**2) + (-phi[xl,yb] + phi[xr,ya])/(2.*dx*dy))))
+
+    # for x in range(0,Lx):
+    #     for y in range(0,Ly):
+    #         phi[x,y] = phi[x,y] - dphi[x,y]
+    #         theta[x,y] = theta[x,y] - dtheta[x,y]
+
+
     phi -= dphi
     theta -= dtheta
+
     np.savetxt('dtheta.dat', dtheta)
     np.savetxt('dphi.dat', dphi)
     np.savetxt('theta.dat', theta)
     np.savetxt('phi.dat', phi)
-    #print(dtheta)
+    ##print(dtheta)
+    #print(dphi)
     #phi = phi - dphi
     #theta = theta - dtheta
-    return(phi,theta, dphi,dtheta)
+    return(phi,theta)
 
-phi,theta = derivativesphere(1)
+phi,theta = derivativesphere(1e-3)
 file = open('finaldirectorfield.dat', 'w')
 
 Lx,Ly = 101, 101

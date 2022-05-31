@@ -15,13 +15,12 @@ import InitialiseSkyrmion
 
 Lx, Ly = 101, 101
 R = 40
-
-def sphere(a,b,c):
+#E=0.0
+def sphere(a,b,c,phi,theta):
     dx = 1
     dy = 1
     E=0.0
-    phi = np.loadtxt('phi.dat')
-    theta = np.loadtxt('theta.dat')
+
 
     for x in range(0,Lx):
 
@@ -50,6 +49,7 @@ def sphere(a,b,c):
                 math.cos(theta[x,y])*math.sin(theta[x,y])*((math.sin(phi[x,y])*(-phi[x,yb] + phi[x,ya]))/(2.*dy) + (math.cos(phi[x,y])*(-phi[xl,y] + phi[xr,y]))/(2.*dx))) + \
                 a*(math.cos(phi[x,y])*((math.cos(theta[x,y])*(-theta[xl,y] + theta[xr,y]))/(2.*dx) + (math.sin(theta[x,y])*(-phi[x,yb] + phi[x,ya]))/(2.*dy)) + \
                 math.sin(phi[x,y])*((math.cos(theta[x,y])*(-theta[x,yb] + theta[x,ya]))/(2.*dy) - (math.sin(theta[x,y])*(-phi[xl,y] + phi[xr,y]))/(2.*dx)))**2
+            #print(E)
     print(E)
     return(E)
 
@@ -70,5 +70,6 @@ def projection(u,v):
         2*u[x,y]*v[x,y]*((-u[x,yb] + u[x,ya])/(2.*dy) + (-v[xl,y] + v[xr,y])/(2.*dx)))**2)/(1 + u[x,y]**2 + v[x,y]**2)**4
 
     return(E)
-
-sphere(1,1,1)
+phi = np.loadtxt('phi.dat')
+theta = np.loadtxt('theta.dat')
+sphere(1,1,1, phi, theta)
