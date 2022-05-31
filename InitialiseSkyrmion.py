@@ -13,7 +13,8 @@ os.chdir('results')
 
 Lx, Ly = 101, 101
 R = 40
-twist = 1.0/1.0
+numtwists = 1.0
+twist = 1.0/numtwists
 
 def initialise(Lx, Ly, R,twist):
     theta = np.zeros([Lx, Ly])

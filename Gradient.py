@@ -10,18 +10,18 @@ import SkyrmionEnergy
 
 def derivativesphere(gamma):
     dx, dy = 1, 1
+    Lx,Ly = 101,101
     numits = 10000
-    tolerance = 1e-2
-    gamma = -1e-3
+    tolerance = 1e-1
+    gamma = -1e-2
     phi = np.loadtxt('phi.dat')
     theta = np.loadtxt('theta.dat')
-    a,b,c = 1,1,1
+    a,b,c = 1,1,1e-2
     E = SkyrmionEnergy.sphere(a,b,c, phi,theta)
     phi,theta = minimise(gamma,phi,theta)
     #SkyrmionEnergy.sphere(a,b,c, phi,theta)
 
     for i in range(0,numits):
-        #print(np.sum(dphi),np.sum(dtheta))
         print(i)
         Eprev = E
         #phi,theta,dphi, dtheta = minimise(gamma,phi,theta)
@@ -32,13 +32,14 @@ def derivativesphere(gamma):
         #     np.savetxt('phifinal',phi)
         #     np.savetxt('thetafinal',theta)
         #     return(phi,theta)
-        print(abs(Eprev - E))
+        print(-(Eprev - E))
         if abs(Eprev - E) < tolerance:
             np.savetxt('phifinal',phi)
             np.savetxt('thetafinal',theta)
             return(phi,theta)
         else:
             phi,theta = minimise(gamma,phi,theta)
+
     np.savetxt('phifinal',phi)
     np.savetxt('thetafinal',theta)
     return(phi,theta)

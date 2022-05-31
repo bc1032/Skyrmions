@@ -70,6 +70,6 @@ def projection(u,v):
         2*u[x,y]*v[x,y]*((-u[x,yb] + u[x,ya])/(2.*dy) + (-v[xl,y] + v[xr,y])/(2.*dx)))**2)/(1 + u[x,y]**2 + v[x,y]**2)**4
 
     return(E)
-phi = np.loadtxt('phi.dat')
-theta = np.loadtxt('theta.dat')
-sphere(1,1,1, phi, theta)
+# phi = np.loadtxt('phi.dat')
+# theta = np.loadtxt('theta.dat')
+# sphere(1,1,1, phi, theta)
