@@ -11,12 +11,12 @@ import SkyrmionEnergy
 def derivativesphere(gamma):
     dx, dy = 1, 1
     Lx,Ly = 101,101
-    numits = 10000
-    tolerance = 1e-1
-    gamma = -1e-2
+    numits = 1000
+    tolerance = 1e-3
+    gamma = 1e-2
     phi = np.loadtxt('phi.dat')
     theta = np.loadtxt('theta.dat')
-    a,b,c = 1,1,1e-2
+    a,b,c = 1,1,1e1
     E = SkyrmionEnergy.sphere(a,b,c, phi,theta)
     phi,theta = minimise(gamma,phi,theta)
     #SkyrmionEnergy.sphere(a,b,c, phi,theta)
@@ -75,41 +75,61 @@ def minimise(gamma,phi,theta):
                 ya = y+1
                 yb = y-1
 
-            dphi[x,y] = gamma*(math.sin(theta[x,y])*((b*math.sin(theta[x,y])*math.sin(phi[x,y])*(-theta[x,yb] + theta[x,ya]))/dy \
-                        + (b*math.cos(phi[x,y])*math.sin(theta[x,y])*(-theta[xl,y] + theta[xr,y]))/dx -\
-                        2*a*math.cos(theta[x,y])*(((-theta[x,yb] + theta[x,ya])*(-phi[x,yb] + phi[x,ya]))/(4.*dy**2) + ((-theta[xl,y] + theta[xr,y])*(-phi[xl,y] + phi[xr,y]))/(4.*dx**2)) - \
-                        a*math.sin(theta[x,y])*((phi[x,yb] - 2*phi[x,y] + phi[x,ya])/dx + (phi[xl,y] - 2*phi[x,y] + phi[xr,y])/dx) + \
-                        a*math.cos(2*phi[x,y])*(-2*math.cos(theta[x,y])*((-theta[xl,yb] + theta[xr,ya])/(4.*dx*dy) + ((-theta[x,yb] + theta[x,ya])*(-phi[x,yb] + phi[x,ya]))/(4.*dy**2) - \
-                        ((-theta[xl,y] + theta[xr,y])*(-phi[xl,y] + phi[xr,y]))/(4.*dx**2)) + \
-                        math.sin(theta[x,y])*(((-theta[x,yb] + theta[x,ya])*(-theta[xl,y] + theta[xr,y]))/(2.*dx*dy) - (phi[x,yb] - 2*phi[x,y] + phi[x,ya])/dx + \
-                        ((-phi[x,yb] + phi[x,ya])*(-phi[xl,y] + phi[xr,y]))/(2.*dx*dy) + (phi[xl,y] - 2*phi[x,y] + phi[xr,y])/dx)) + \
-                        a*math.sin(2*phi[x,y])*(math.cos(theta[x,y])*(-((theta[x,yb] - 2*theta[x,y] + theta[x,ya])/dx) + (theta[xl,y] - 2*theta[x,y] + theta[xr,y])/dx + \
-                        ((-theta[xl,y] + theta[xr,y])*(-phi[x,yb] + phi[x,ya]))/(2.*dx*dy) + ((-theta[x,yb] + theta[x,ya])*(-phi[xl,y] + phi[xr,y]))/(2.*dx*dy)) + \
-                        math.sin(theta[x,y])*((-theta[x,yb] + theta[x,ya])**2/(4.*dy**2) - (-theta[xl,y] + theta[xr,y])**2/(4.*dx**2) + (-phi[x,yb] + phi[x,ya])**2/(4.*dy**2) - \
-                        (-phi[xl,y] + phi[xr,y])**2/(4.*dx**2) + (-phi[xl,yb] + phi[xr,ya])/(2.*dx*dy)))))
+            dphidx1 = (phi[xr,y]-phi[xl,y])/(2.*dx)
+            dphidxm = (phi[xr,y]-phi[xl,y] - 2*math.pi)/(2.*dx)
+            dphidxp = (phi[xr,y]-phi[xl,y] + 2*math.pi)/(2.*dx)
 
-            dtheta[x,y] = -gamma*(((b*math.sin(theta[x,y])**2*math.sin(phi[x,y])*(-phi[x,yb] + phi[x,ya]))/dy)\
-                        - (b*math.cos(phi[x,y])*math.sin(theta[x,y])**2*(-phi[xl,y] + phi[xr,y]))/dx + \
-                        a*math.cos(theta[x,y])*math.sin(2*phi[x,y])*(-2*math.cos(theta[x,y])*((-theta[xl,yb] + theta[xr,ya])/(4.*dx*dy) + \
-                        ((-theta[x,yb] + theta[x,ya])*(-phi[x,yb] + phi[x,ya]))/(4.*dy**2) - ((-theta[xl,y] + theta[xr,y])*(-phi[xl,y] + phi[xr,y]))/(4.*dx**2)) + \
-                        math.sin(theta[x,y])*(((-theta[x,yb] + theta[x,ya])*(-theta[xl,y] + theta[xr,y]))/(2.*dx*dy) - (phi[x,yb] - 2*phi[x,y] + phi[x,ya])/dx + \
-                        ((-phi[x,yb] + phi[x,ya])*(-phi[xl,y] + phi[xr,y]))/(2.*dx*dy) + (phi[xl,y] - 2*phi[x,y] + phi[xr,y])/dx)) + \
-                        math.cos(theta[x,y])*(-(a*math.cos(theta[x,y])*((theta[x,yb] - 2*theta[x,y] + theta[x,ya])/dx + (theta[xl,y] - 2*theta[x,y] + theta[xr,y])/dx)) + \
-                        math.sin(theta[x,y])*(-2*c + a*((-theta[x,yb] + theta[x,ya])**2/(4.*dy**2) + (-theta[xl,y] + theta[xr,y])**2/(4.*dx**2) + (-phi[x,yb] + phi[x,ya])**2/(4.*dy**2) + \
-                        (-phi[xl,y] + phi[xr,y])**2/(4.*dx**2)))) - a*math.cos(theta[x,y])*math.cos(2*phi[x,y])*\
-                        (math.cos(theta[x,y])*(-((theta[x,yb] - 2*theta[x,y] + theta[x,ya])/dx) + (theta[xl,y] - 2*theta[x,y] + theta[xr,y])/dx + \
-                        ((-theta[xl,y] + theta[xr,y])*(-phi[x,yb] + phi[x,ya]))/(2.*dx*dy) + ((-theta[x,yb] + theta[x,ya])*(-phi[xl,y] + phi[xr,y]))/(2.*dx*dy)) + \
-                        math.sin(theta[x,y])*((-theta[x,yb] + theta[x,ya])**2/(4.*dy**2) - (-theta[xl,y] + theta[xr,y])**2/(4.*dx**2) + (-phi[x,yb] + phi[x,ya])**2/(4.*dy**2) - \
-                        (-phi[xl,y] + phi[xr,y])**2/(4.*dx**2) + (-phi[xl,yb] + phi[xr,ya])/(2.*dx*dy))))
+            dphidx = min(abs(dphidx1),abs(dphidxm),abs(dphidxp))
 
-    # for x in range(0,Lx):
-    #     for y in range(0,Ly):
-    #         phi[x,y] = phi[x,y] - dphi[x,y]
-    #         theta[x,y] = theta[x,y] - dtheta[x,y]
+            dphidy1 = (phi[x,ya]-phi[x,yb])/(2.*dx)
+            dphidym = (phi[x,ya]-phi[x,yb] - 2*math.pi)/(2.*dx)
+            dphidyp = (phi[x,ya]-phi[x,yb] + 2*math.pi)/(2.*dx)
 
+            dphidy = min(abs(dphidy1),abs(dphidym),abs(dphidyp))
+
+            dphidxdy1 = (phi[xr,ya] - phi[xl,yb])/(4.*dx*dy)
+            dphidxdyp = (phi[xr,ya] - phi[xl,yb] + 2*math.pi)/(4.*dx*dy)
+            dphidxdym = (phi[xr,ya] - phi[xl,yb] - 2*math.pi)/(4.*dx*dy)
+
+            dphidxdy = min(abs(dphidxdy1),abs(dphidxdym),abs(dphidxdyp))
+
+            dphidxsq1 = (phi[xr,y]+phi[xl,y] - 2*phi[x,y])/(2.*dx)
+            dphidxsqm = (phi[xr,y]+phi[xl,y] - 2*phi[x,y] - 2*math.pi)/(2.*dx)
+            dphidxsqp = (phi[xr,y]+phi[xl,y] - 2*phi[x,y] + 2*math.pi)/(2.*dx)
+
+            dphidxsq = min(abs(dphidxsq1),abs(dphidxsqm),abs(dphidxsqp))
+
+            dphidysq1 = (phi[x,ya]+phi[x,yb] - 2*phi[x,y])/(2.*dx)
+            dphidysqm = (phi[x,ya]+phi[x,yb] - 2*phi[x,y] - 2*math.pi)/(2.*dx)
+            dphidysqp = (phi[x,ya]+phi[x,yb] - 2*phi[x,y] + 2*math.pi)/(2.*dx)
+
+            dphidysq = min(abs(dphidysq1),abs(dphidysqm),abs(dphidysqp))
+
+            dphi[x,y] = gamma*(math.sin(theta[x,y])*(-(a*(dphidxsq + dphidysq)*math.sin(theta[x,y])) + (b*math.sin(theta[x,y])*math.sin(phi[x,y])*(theta[x,ya] - theta[x,yb]))/dy + \
+                        (b*math.cos(phi[x,y])*math.sin(theta[x,y])*(-theta[xl,y] + theta[xr,y]))/dx - 2*a*math.cos(theta[x,y])*((dphidy*(theta[x,ya] - theta[x,yb]))/(2.*dy) + (dphidx*(-theta[xl,y] + theta[xr,y]))/(2.*dx)) + \
+                        a*math.sin(2*phi[x,y])*(math.sin(theta[x,y])*(-dphidx**2 + 2*dphidxdy + dphidy**2 + (theta[x,ya] - theta[x,yb])**2/(4.*dy**2) - (-theta[xl,y] + theta[xr,y])**2/(4.*dx**2)) + \
+                        math.cos(theta[x,y])*((dphidx*(theta[x,ya] - theta[x,yb]))/dy - (-2*theta[x,y] + theta[x,ya] + theta[x,yb])/dx + (dphidy*(-theta[xl,y] + theta[xr,y]))/dx + (-2*theta[x,y] + theta[xl,y] + theta[xr,y])/dx)) + \
+                        a*math.cos(2*phi[x,y])*(math.sin(theta[x,y])*(dphidxsq + 2*dphidx*dphidy - dphidysq + ((theta[x,ya] - theta[x,yb])*(-theta[xl,y] + theta[xr,y]))/(2.*dx*dy)) - \
+                        2*math.cos(theta[x,y])*((dphidy*(theta[x,ya] - theta[x,yb]))/(2.*dy) - (dphidx*(-theta[xl,y] + theta[xr,y]))/(2.*dx) + (-theta[xl,yb] + theta[xr,ya])/(4.*dx*dy)))))
+
+            dtheta[x,y] = gamma*(-2*b*dphidx*math.cos(phi[x,y])*math.sin(theta[x,y])**2 - 2*b*dphidy*math.sin(theta[x,y])**2*math.sin(phi[x,y]) -
+                        a*math.cos(theta[x,y])*math.cos(2*phi[x,y])*(math.sin(theta[x,y])*(-dphidx**2 + 2*dphidxdy + dphidy**2 + (theta[x,ya] - theta[x,yb])**2/(4.*dy**2) - (-theta[xl,y] + theta[xr,y])**2/(4.*dx**2)) + \
+                        math.cos(theta[x,y])*((dphidx*(theta[x,ya] - theta[x,yb]))/dy - (-2*theta[x,y] + theta[x,ya] + theta[x,yb])/dx + (dphidy*(-theta[xl,y] + theta[xr,y]))/dx + (-2*theta[x,y] + theta[xl,y] + theta[xr,y])/dx)) +\
+                        math.cos(theta[x,y])*(-(a*math.cos(theta[x,y])*((-2*theta[x,y] + theta[x,ya] + theta[x,yb])/dx + (-2*theta[x,y] + theta[xl,y] + theta[xr,y])/dx)) +\
+                        math.sin(theta[x,y])*(-2*c + a*(dphidx**2 + dphidy**2 + (theta[x,ya] - theta[x,yb])**2/(4.*dy**2) + (-theta[xl,y] + theta[xr,y])**2/(4.*dx**2)))) +\
+                        a*math.cos(theta[x,y])*math.sin(2*phi[x,y])*(math.sin(theta[x,y])*(dphidxsq + 2*dphidx*dphidy - dphidysq + ((theta[x,ya] - theta[x,yb])*(-theta[xl,y] + theta[xr,y]))/(2.*dx*dy)) -\
+                        2*math.cos(theta[x,y])*((dphidy*(theta[x,ya] - theta[x,yb]))/(2.*dy) - (dphidx*(-theta[xl,y] + theta[xr,y]))/(2.*dx) + (-theta[xl,yb] + theta[xr,ya])/(4.*dx*dy))))
 
     phi -= dphi
     theta -= dtheta
+    file = open('finaldirectorfield.dat', 'w')
+    for x in range(0,Lx):
+        for y in range(0,Ly):
+            i = math.sin(theta[x,y])*math.cos(phi[x,y])
+            j = math.sin(theta[x,y])*math.sin(phi[x,y])
+            k = math.cos(theta[x,y])
+            file.write("%f  %f  %f\n" % (i,j,k))
+    file.close()
 
     np.savetxt('dtheta.dat', dtheta)
     np.savetxt('dphi.dat', dphi)

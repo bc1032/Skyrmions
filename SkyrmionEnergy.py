@@ -45,10 +45,21 @@ def sphere(a,b,c,phi,theta):
                 ya = y+1
                 yb = y-1
 
-            E += c*(-1 + math.cos(theta[x,y])**2) + b*(-(math.cos(phi[x,y])*(-theta[x,yb] + theta[x,ya]))/(2.*dy) + (math.sin(phi[x,y])*(-theta[xl,y] + theta[xr,y]))/(2.*dx) +\
-                math.cos(theta[x,y])*math.sin(theta[x,y])*((math.sin(phi[x,y])*(-phi[x,yb] + phi[x,ya]))/(2.*dy) + (math.cos(phi[x,y])*(-phi[xl,y] + phi[xr,y]))/(2.*dx))) + \
-                a*(math.cos(phi[x,y])*((math.cos(theta[x,y])*(-theta[xl,y] + theta[xr,y]))/(2.*dx) + (math.sin(theta[x,y])*(-phi[x,yb] + phi[x,ya]))/(2.*dy)) + \
-                math.sin(phi[x,y])*((math.cos(theta[x,y])*(-theta[x,yb] + theta[x,ya]))/(2.*dy) - (math.sin(theta[x,y])*(-phi[xl,y] + phi[xr,y]))/(2.*dx)))**2
+            dphidx1 = (phi[xr,y]-phi[xl,y])/(2.*dx)
+            dphidxm = (phi[xr,y]-phi[xl,y] - 2*math.pi)/(2.*dx)
+            dphidxp = (phi[xr,y]-phi[xl,y] + 2*math.pi)/(2.*dx)
+
+            dphidx = min(dphidx1,dphidxm,dphidxp)
+
+            dphidy1 = (phi[x,ya]-phi[x,yb])/(2.*dx)
+            dphidym = (phi[x,ya]-phi[x,yb] - 2*math.pi)/(2.*dx)
+            dphidyp = (phi[x,ya]-phi[x,yb] + 2*math.pi)/(2.*dx)
+
+            dphidy = min(abs(dphidy1),abs(dphidym),abs(dphidyp))
+
+            E += c*(-1 + math.cos(theta[x,y])**2) + b*(math.cos(theta[x,y])*math.sin(theta[x,y])*(dphidx*math.cos(phi[x,y]) + dphidy*math.sin(phi[x,y])) - (math.cos(phi[x,y])*(-theta[x,yb] + theta[x,ya]))/(2.*dy) + \
+                (math.sin(phi[x,y])*(-theta[xl,y] + theta[xr,y]))/(2.*dx)) + a*(math.sin(phi[x,y])*(-(dphidx*math.sin(theta[x,y])) + (math.cos(theta[x,y])*(-theta[x,yb] + theta[x,ya]))/(2.*dy)) + \
+                math.cos(phi[x,y])*(dphidy*math.sin(theta[x,y]) + (math.cos(theta[x,y])*(-theta[xl,y] + theta[xr,y]))/(2.*dx)))**2
             #print(E)
     print(E)
     return(E)

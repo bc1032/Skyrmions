@@ -53,6 +53,8 @@ def initialise(Lx, Ly, R,twist):
     #print(phi,theta)
     np.savetxt('phi.dat', phi)
     np.savetxt('theta.dat', theta)
+    np.savetxt('iphi.dat', phi)
+    np.savetxt('itheta.dat', theta)
     file.close()
     filei.close()
     filej.close()
