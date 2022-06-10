@@ -11,11 +11,6 @@ if not os.path.exists('results'):
 os.chdir('results')
 
 
-Lx, Ly = 101, 101
-R = 40
-numtwists = 1.0
-twist = 1.0/numtwists
-
 def initialise(Lx, Ly, R,twist):
     theta = np.zeros([Lx, Ly])
     phi = np.zeros([Lx,Ly])
@@ -61,5 +56,3 @@ def initialise(Lx, Ly, R,twist):
     filek.close()
 
     return(phi,theta)
-
-initialise(Lx,Ly,R,twist)

@@ -12,16 +12,10 @@ import InitialiseSkyrmion
 #
 # os.chdir('results')
 
-
-Lx, Ly = 101, 101
-R = 40
-#E=0.0
-def sphere(a,b,c,phi,theta):
+def sphere(a,b,c,phi,theta,Lx,Ly):
     dx = 1
     dy = 1
     E=0.0
-
-
     for x in range(0,Lx):
 
         if x == 0:
@@ -63,12 +57,6 @@ def sphere(a,b,c,phi,theta):
             #print(E)
     print(E)
     return(E)
-
-
-
-
-
-
 
 
 def projection(u,v):

@@ -7,18 +7,24 @@ from scipy.optimize import minimize
 
 import InitialiseSkyrmion
 import SkyrmionEnergy
+Lx, Ly = 151, 151
+R = 40
+numtwists = 5.0
+twist = 1.0/numtwists
+dx,dy = 1,1
+numits = 10000
+
+tolerance = 5e-3
+gamma = 1e-4
+a,b,c = 5,1,1e-2
 
 def derivativesphere(gamma):
-    dx, dy = 1, 1
-    Lx,Ly = 101,101
-    numits = 1000
-    tolerance = 1e-3
-    gamma = 1e-2
+    i=0
+
     phi = np.loadtxt('phi.dat')
     theta = np.loadtxt('theta.dat')
-    a,b,c = 1,1,1e1
-    E = SkyrmionEnergy.sphere(a,b,c, phi,theta)
-    phi,theta = minimise(gamma,phi,theta)
+    E = SkyrmionEnergy.sphere(a,b,c, phi,theta,Lx,Ly)
+    phi,theta = minimise(gamma,phi,theta,a,b,c,i)
     #SkyrmionEnergy.sphere(a,b,c, phi,theta)
 
     for i in range(0,numits):
@@ -26,7 +32,7 @@ def derivativesphere(gamma):
         Eprev = E
         #phi,theta,dphi, dtheta = minimise(gamma,phi,theta)
 
-        E = SkyrmionEnergy.sphere(a,b,c, phi, theta)
+        E = SkyrmionEnergy.sphere(a,b,c, phi, theta,Lx,Ly)
 
         # if (np.sum(dtheta)) < tolerance and np.sum(dtheta) < tolerance:
         #     np.savetxt('phifinal',phi)
@@ -38,18 +44,15 @@ def derivativesphere(gamma):
             np.savetxt('thetafinal',theta)
             return(phi,theta)
         else:
-            phi,theta = minimise(gamma,phi,theta)
+            phi,theta = minimise(gamma,phi,theta,a,b,c,i)
 
     np.savetxt('phifinal',phi)
     np.savetxt('thetafinal',theta)
     return(phi,theta)
 
-def minimise(gamma,phi,theta):
-    a,b,c = 1,1,1
-    Lx,Ly = 101, 101
+def minimise(gamma,phi,theta,a,b,c,i):
     dphi = np.zeros((Lx,Ly))
     dtheta = np.zeros((Lx,Ly))
-    dx,dy = 1,1
     #gamma = -1e-3
     for x in range(0,Lx):
 
@@ -122,7 +125,7 @@ def minimise(gamma,phi,theta):
 
     phi -= dphi
     theta -= dtheta
-    file = open('finaldirectorfield.dat', 'w')
+    file = open('finaldirectorfield%06d.dat' % (i), 'w')
     for x in range(0,Lx):
         for y in range(0,Ly):
             i = math.sin(theta[x,y])*math.cos(phi[x,y])
@@ -140,11 +143,10 @@ def minimise(gamma,phi,theta):
     #phi = phi - dphi
     #theta = theta - dtheta
     return(phi,theta)
+InitialiseSkyrmion.initialise(Lx,Ly,R,twist)
 
-phi,theta = derivativesphere(1e-3)
+phi,theta = derivativesphere(gamma)
 file = open('finaldirectorfield.dat', 'w')
-
-Lx,Ly = 101, 101
 
 for x in range(0,Lx):
     for y in range(0,Ly):
