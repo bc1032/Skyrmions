@@ -51,8 +51,8 @@ def sphere(a,b,c,phi,theta,Lx,Ly):
 
             dphidy = min(abs(dphidy1),abs(dphidym),abs(dphidyp))
 
-            E += c*(-1 + math.cos(theta[x,y])**2) + b*(math.cos(theta[x,y])*math.sin(theta[x,y])*(dphidx*math.cos(phi[x,y]) + dphidy*math.sin(phi[x,y])) - (math.cos(phi[x,y])*(-theta[x,yb] + theta[x,ya]))/(2.*dy) + \
-                (math.sin(phi[x,y])*(-theta[xl,y] + theta[xr,y]))/(2.*dx)) + a*(math.sin(phi[x,y])*(-(dphidx*math.sin(theta[x,y])) + (math.cos(theta[x,y])*(-theta[x,yb] + theta[x,ya]))/(2.*dy)) + \
+            E += c*(-1 + math.cos(theta[x,y]))**2 + b*(math.cos(theta[x,y])*math.sin(theta[x,y])*(dphidx*math.cos(phi[x,y]) + dphidy*math.sin(phi[x,y])) - (math.cos(phi[x,y])*(theta[x,ya] - theta[x,yb]))/(2.*dy) + \
+                (math.sin(phi[x,y])*(-theta[xl,y] + theta[xr,y]))/(2.*dx)) + a*(math.sin(phi[x,y])*(-(dphidx*math.sin(theta[x,y])) + (math.cos(theta[x,y])*(theta[x,ya] - theta[x,yb]))/(2.*dy)) + \
                 math.cos(phi[x,y])*(dphidy*math.sin(theta[x,y]) + (math.cos(theta[x,y])*(-theta[xl,y] + theta[xr,y]))/(2.*dx)))**2
             #print(E)
     print(E)

@@ -8,15 +8,15 @@ from scipy.optimize import minimize
 import InitialiseSkyrmion
 import SkyrmionEnergy
 Lx, Ly = 151, 151
-R = 40
-numtwists = 5.0
+R = 30
+numtwists = 1.0
 twist = 1.0/numtwists
 dx,dy = 1,1
 numits = 10000
 
-tolerance = 5e-3
-gamma = 1e-4
-a,b,c = 5,1,1e-2
+tolerance = -1e-3
+gamma = 1e-2
+a,b,c = 1,1,0
 
 def derivativesphere(gamma):
     i=0
@@ -26,25 +26,28 @@ def derivativesphere(gamma):
     E = SkyrmionEnergy.sphere(a,b,c, phi,theta,Lx,Ly)
     phi,theta = minimise(gamma,phi,theta,a,b,c,i)
     #SkyrmionEnergy.sphere(a,b,c, phi,theta)
+    n=0
 
     for i in range(0,numits):
         print(i)
         Eprev = E
-        #phi,theta,dphi, dtheta = minimise(gamma,phi,theta)
-
         E = SkyrmionEnergy.sphere(a,b,c, phi, theta,Lx,Ly)
 
-        # if (np.sum(dtheta)) < tolerance and np.sum(dtheta) < tolerance:
-        #     np.savetxt('phifinal',phi)
-        #     np.savetxt('thetafinal',theta)
-        #     return(phi,theta)
         print(-(Eprev - E))
-        if abs(Eprev - E) < tolerance:
+        # if E-Eprev > -10 and n == 0:
+        #     n+=1
+        #     gamma /= 10
+        # elif E-Eprev > -5 and n == 1:
+        #     n+=1
+        #     gamma /= 10
+        if (E - Eprev) > tolerance:
             np.savetxt('phifinal',phi)
             np.savetxt('thetafinal',theta)
             return(phi,theta)
         else:
             phi,theta = minimise(gamma,phi,theta,a,b,c,i)
+            phiprev, thetaprev = phi,theta
+
 
     np.savetxt('phifinal',phi)
     np.savetxt('thetafinal',theta)
@@ -90,21 +93,21 @@ def minimise(gamma,phi,theta,a,b,c,i):
 
             dphidy = min(abs(dphidy1),abs(dphidym),abs(dphidyp))
 
-            dphidxdy1 = (phi[xr,ya] - phi[xl,yb])/(4.*dx*dy)
-            dphidxdyp = (phi[xr,ya] - phi[xl,yb] + 2*math.pi)/(4.*dx*dy)
-            dphidxdym = (phi[xr,ya] - phi[xl,yb] - 2*math.pi)/(4.*dx*dy)
+            dphidxdy1 = (phi[xr,ya] + phi[xl,yb] - phi[xl,ya] - phi[xr,yb])/(dx*dy)
+            dphidxdyp = (phi[xr,ya] + phi[xl,yb] - phi[xl,ya] - phi[xr,yb] + 2*math.pi)/(dx*dy)
+            dphidxdym = (phi[xr,ya] + phi[xl,yb] - phi[xl,ya] - phi[xr,yb] - 2*math.pi)/(dx*dy)
 
             dphidxdy = min(abs(dphidxdy1),abs(dphidxdym),abs(dphidxdyp))
 
-            dphidxsq1 = (phi[xr,y]+phi[xl,y] - 2*phi[x,y])/(2.*dx)
-            dphidxsqm = (phi[xr,y]+phi[xl,y] - 2*phi[x,y] - 2*math.pi)/(2.*dx)
-            dphidxsqp = (phi[xr,y]+phi[xl,y] - 2*phi[x,y] + 2*math.pi)/(2.*dx)
+            dphidxsq1 = (phi[xr,y]+phi[xl,y] - 2*phi[x,y])/(dx*dx)
+            dphidxsqm = (phi[xr,y]+phi[xl,y] - 2*phi[x,y] - 2*math.pi)/(dx*dx)
+            dphidxsqp = (phi[xr,y]+phi[xl,y] - 2*phi[x,y] + 2*math.pi)/(dx*dx)
 
             dphidxsq = min(abs(dphidxsq1),abs(dphidxsqm),abs(dphidxsqp))
 
-            dphidysq1 = (phi[x,ya]+phi[x,yb] - 2*phi[x,y])/(2.*dx)
-            dphidysqm = (phi[x,ya]+phi[x,yb] - 2*phi[x,y] - 2*math.pi)/(2.*dx)
-            dphidysqp = (phi[x,ya]+phi[x,yb] - 2*phi[x,y] + 2*math.pi)/(2.*dx)
+            dphidysq1 = (phi[x,ya]+phi[x,yb] - 2*phi[x,y])/(dy*dy)
+            dphidysqm = (phi[x,ya]+phi[x,yb] - 2*phi[x,y] - 2*math.pi)/(dy*dy)
+            dphidysqp = (phi[x,ya]+phi[x,yb] - 2*phi[x,y] + 2*math.pi)/(dy*dy)
 
             dphidysq = min(abs(dphidysq1),abs(dphidysqm),abs(dphidysqp))
 
@@ -115,12 +118,12 @@ def minimise(gamma,phi,theta,a,b,c,i):
                         a*math.cos(2*phi[x,y])*(math.sin(theta[x,y])*(dphidxsq + 2*dphidx*dphidy - dphidysq + ((theta[x,ya] - theta[x,yb])*(-theta[xl,y] + theta[xr,y]))/(2.*dx*dy)) - \
                         2*math.cos(theta[x,y])*((dphidy*(theta[x,ya] - theta[x,yb]))/(2.*dy) - (dphidx*(-theta[xl,y] + theta[xr,y]))/(2.*dx) + (-theta[xl,yb] + theta[xr,ya])/(4.*dx*dy)))))
 
-            dtheta[x,y] = gamma*(-2*b*dphidx*math.cos(phi[x,y])*math.sin(theta[x,y])**2 - 2*b*dphidy*math.sin(theta[x,y])**2*math.sin(phi[x,y]) -
+            dtheta[x,y] = gamma*(-2*b*dphidx*math.cos(phi[x,y])*math.sin(theta[x,y])**2 + c*(2*math.sin(theta[x,y]) - math.sin(2*theta[x,y])) - 2*b*dphidy*math.sin(theta[x,y])**2*math.sin(phi[x,y]) + \
+                        a*math.cos(theta[x,y])*(math.sin(theta[x,y])*(dphidx**2 + dphidy**2 + (theta[x,ya] - theta[x,yb])**2/(4.*dy**2) + (-theta[xl,y] + theta[xr,y])**2/(4.*dx**2)) - \
+                        math.cos(theta[x,y])*((-2*theta[x,y] + theta[x,ya] + theta[x,yb])/dx + (-2*theta[x,y] + theta[xl,y] + theta[xr,y])/dx)) - \
                         a*math.cos(theta[x,y])*math.cos(2*phi[x,y])*(math.sin(theta[x,y])*(-dphidx**2 + 2*dphidxdy + dphidy**2 + (theta[x,ya] - theta[x,yb])**2/(4.*dy**2) - (-theta[xl,y] + theta[xr,y])**2/(4.*dx**2)) + \
                         math.cos(theta[x,y])*((dphidx*(theta[x,ya] - theta[x,yb]))/dy - (-2*theta[x,y] + theta[x,ya] + theta[x,yb])/dx + (dphidy*(-theta[xl,y] + theta[xr,y]))/dx + (-2*theta[x,y] + theta[xl,y] + theta[xr,y])/dx)) +\
-                        math.cos(theta[x,y])*(-(a*math.cos(theta[x,y])*((-2*theta[x,y] + theta[x,ya] + theta[x,yb])/dx + (-2*theta[x,y] + theta[xl,y] + theta[xr,y])/dx)) +\
-                        math.sin(theta[x,y])*(-2*c + a*(dphidx**2 + dphidy**2 + (theta[x,ya] - theta[x,yb])**2/(4.*dy**2) + (-theta[xl,y] + theta[xr,y])**2/(4.*dx**2)))) +\
-                        a*math.cos(theta[x,y])*math.sin(2*phi[x,y])*(math.sin(theta[x,y])*(dphidxsq + 2*dphidx*dphidy - dphidysq + ((theta[x,ya] - theta[x,yb])*(-theta[xl,y] + theta[xr,y]))/(2.*dx*dy)) -\
+                        a*math.cos(theta[x,y])*math.sin(2*phi[x,y])*(math.sin(theta[x,y])*(dphidxsq + 2*dphidx*dphidy - dphidysq + ((theta[x,ya] - theta[x,yb])*(-theta[xl,y] + theta[xr,y]))/(2.*dx*dy)) - \
                         2*math.cos(theta[x,y])*((dphidy*(theta[x,ya] - theta[x,yb]))/(2.*dy) - (dphidx*(-theta[xl,y] + theta[xr,y]))/(2.*dx) + (-theta[xl,yb] + theta[xr,ya])/(4.*dx*dy))))
 
     phi -= dphi
@@ -138,10 +141,7 @@ def minimise(gamma,phi,theta,a,b,c,i):
     np.savetxt('dphi.dat', dphi)
     np.savetxt('theta.dat', theta)
     np.savetxt('phi.dat', phi)
-    ##print(dtheta)
-    #print(dphi)
-    #phi = phi - dphi
-    #theta = theta - dtheta
+
     return(phi,theta)
 InitialiseSkyrmion.initialise(Lx,Ly,R,twist)
 

@@ -33,7 +33,7 @@ def initialise(Lx, Ly, R,twist):
                 phi[x,y] = math.pi/2 + math.atan2(y-centrey,x-centrex)
                 theta[x,y] =  math.pi*math.sqrt((x-centrex)**2 + (y-centrey)**2)/(twist*R)
             else:
-                phi[x,y] = math.pi/2
+                phi[x,y] = math.pi/2 + math.atan2(y-centrey,x-centrex)
                 theta[x,y] = math.pi
 
             i = math.sin(theta[x,y])*math.cos(phi[x,y])
