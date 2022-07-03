@@ -72,6 +72,7 @@ def sphere(a,b,c,phi,theta,Lx,Ly):
             E += a*dthetadx**2 + a*dthetady**2 - b*dthetady*math.cos(phi[x,y]) + b*dphidx*math.cos(theta[x,y])*math.cos(phi[x,y])*math.sin(theta[x,y]) \
                     + a*dphidx**2*math.sin(theta[x,y])**2 + a*dphidy**2*math.sin(theta[x,y])**2 + \
                     c*math.sin(theta[x,y])**4 + b*dthetadx*math.sin(phi[x,y]) + b*dphidy*math.cos(theta[x,y])*math.sin(theta[x,y])*math.sin(phi[x,y])
+                
             #print(E)
     print(E)
     return(E)

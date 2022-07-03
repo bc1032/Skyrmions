@@ -12,11 +12,11 @@ R = 30
 numtwists = 1.0
 twist = 1.0/numtwists
 dx,dy = 1,1
-numits = 10000
+numits = 50000
 
-tolerance = -1e-3
-gamma = 1e-2
-a,b,c = 10,0,1#c is negative
+tolerance = -1e-6
+gamma = 1e0
+a,b,c = 0,0,1e-2#b is negative.a
 
 def derivativesphere(gamma):
     i=0
@@ -34,14 +34,6 @@ def derivativesphere(gamma):
         E = SkyrmionEnergy.sphere(a,b,c, phi, theta,Lx,Ly)
         Energy.append(E)
         print(-(Eprev - E))
-        # if E-Eprev > -50 and n == 0:
-        #     gamma /= 10
-        #     n+=1
-        # elif E-Eprev > -4:
-        #     gamma /= 10
-        #     n+=1
-        # elif E-Eprev > -1:
-        #     gamma *= 10
         if (E - Eprev) > tolerance:
             np.savetxt('phifinal',phi)
             np.savetxt('thetafinal',theta)
@@ -163,7 +155,7 @@ def minimise(gamma,phi,theta,a,b,c,i):
 
     phi -= dphi
     theta -= dtheta
-    file = open('finaldirectorfield%06d.dat' % (i), 'w')
+    file = open('finaldirectorfield.dat', 'w')
     for x in range(0,Lx):
         for y in range(0,Ly):
             i = math.sin(theta[x,y])*math.cos(phi[x,y])
