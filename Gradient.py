@@ -8,15 +8,15 @@ from scipy.optimize import minimize
 import InitialiseSkyrmion
 import SkyrmionEnergy
 Lx, Ly = 151, 151
-R = 30
+R = 50.0
 numtwists = 1.0
-twist = 1.0/numtwists
+twist = numtwists
 dx,dy = 1,1
 numits = 50000
 
 tolerance = -1e-6
-gamma = 1e0
-a,b,c = 0,0,1e-2#b is negative.a
+gamma = 1e-2
+a,b,c = 10,-10,1e-2#b is negative.a
 
 def derivativesphere(gamma):
     i=0

@@ -4,11 +4,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 import scipy
 from scipy.optimize import minimize
+a,b,c = 10,-10,1e-2#b is negative.a
 
 if not os.path.exists('results'):
     os.makedirs('results')
-
-os.chdir('results')
+if not os.path.exists('results/c%f' % c):
+    os.makedirs('results/c%f' % c)
+os.chdir('results/c%f' % c)
 
 
 def initialise(Lx, Ly, R,twist):
@@ -31,9 +33,9 @@ def initialise(Lx, Ly, R,twist):
             # If inside circle of Radius, R, change elements to desired quantities.
             if math.sqrt(dx**2 + dy**2) <= R:
                 phi[x,y] = math.pi/2 + math.atan2(y-centrey,x-centrex)
-                theta[x,y] =  math.pi*math.sqrt((x-centrex)**2 + (y-centrey)**2)/(twist*R)
+                theta[x,y] =  twist*math.pi*math.sqrt((x-centrex)**2 + (y-centrey)**2)/(R)
             else:
-                phi[x,y] = math.pi/2# + math.atan2(y-centrey,x-centrex)
+                phi[x,y] = math.pi/2 #+ math.atan2(y-centrey,x-centrex)
                 theta[x,y] = math.pi
 
             i = math.sin(theta[x,y])*math.cos(phi[x,y])
